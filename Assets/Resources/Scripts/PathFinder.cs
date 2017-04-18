@@ -3,37 +3,65 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PathFinder : MonoBehaviour {
+	// array holding GridMap's collision map
 	int[,] map;
+	// collision map width and height
 	int width;
 	int height;
+
+
+	// position of the spawn point assigned to this pathfinder
 	int xPos;
 	int zPos;
-	Vector3 spawnPos;
+
 	int castCount = 0;
 	bool goalHit = false;
 
-	int drawing;
+	// positions and directions of the valid paths are saved and in a stack
+	// and then popped off later to draw them
+
+	// Directions
+	List<int> pathToDraw;
+	// X and Z positions
+	List<int> posToDraw;
+	// List holding every place the pathfinder has found so far
+	//  used to check if we have been somewhere so we dont have infinite loops
+	List<int> placesIveSeen;
+
+	// index for the stack of directions to draw in
+	int drawingDir;
+	// index for the stack of positions to draw the indexes at
 	int drawingPos;
 
-	public List<int> pathToDraw;
-	List<int> posToDraw;
 
-	public GameObject point;
 
-	Rigidbody errorGuy;
+	// square object used to mark the path
+	GameObject point;
 
-	bool cast(int dir, int xP, int zP, List<Object> curPath){
+	// different points for each spawn point
+	[Tooltip("Square for marking path from spawnpoint A")]
+	public GameObject pointA;
+	[Tooltip("Square for marking path from spawnpoint B")]
+	public GameObject pointB;
+	[Tooltip("Square for marking path from spawnpoint X")]
+	public GameObject pointX;
+	[Tooltip("Square for marking path from spawnpoint Y")]
+	public GameObject pointY;
+	// used to hold the position for the point to be spawned
+	Vector3 spawnPos;
+
+	bool cast(int dir, int xP, int zP){
 		bool one = true;
 		bool two = true;
-		//pathToDraw.Add (dir);
+		int check = 1;
 		castCount++;
-			if (castCount < 100) {
-				//
-				//Debug.Log ("casting");
-				//Debug.Log (dir);
-				int check = 1;
-				int x = xP;
-				int z = zP;
+		if (castCount < 100) {
+			
+		//	Debug.Log ("casting at " + xP + ", " + zP);
+		//	Debug.Log (dir);
+
+			int x = xP;
+			int z = zP;
 
 			if (dir == 0) {
 				z++;
@@ -47,22 +75,33 @@ public class PathFinder : MonoBehaviour {
 				check = -1;
 				Debug.Log ("Error wrong direction");
 			}
-				int c = 0;
-				while (check > 0 && c < 100) {
-					//Debug.Log (x);
-					//Debug.Log (z);
-					if (x < width && x > 0 && z < height && z > 0) {
-						if (map [x, z] == 0) {
-							if (dir == 0) {
-								z++;
-							} else if (dir == 1) {
-								x--;
-							} else if (dir == 2) {
-								z--;
-							} else if (dir == 3) {
-								x++;
-							}
-						} else if (map [x, z] == 200) {
+
+			int c = 0;
+			while (check > 0 && c < 100) {
+
+				if (x < width && x >= 0 && z < height && z >= 0) {
+					
+					if (map [x, z] == 0) {
+						
+						if (dir == 0) {
+							z++;
+						} else if (dir == 1) {
+							x--;
+						} else if (dir == 2) {
+							z--;
+						} else if (dir == 3) {
+							x++;
+						}
+					} else if (map [x, z] == 200) {
+						//Debug.Log (Mathf.Abs (x - xP));
+						//Debug.Log (Mathf.Abs (z - zP));
+
+						if (Mathf.Abs (x - xP) < 2 && Mathf.Abs (z - zP) < 2) {
+							
+							check = -1;
+								
+						} else {
+							
 							check = -2;
 							if (dir == 0) {
 								z--;
@@ -73,75 +112,81 @@ public class PathFinder : MonoBehaviour {
 							} else if (dir == 3) {
 								x--;
 							}
-
-						} else if (map [x, z] == 100) {
-							check = -3;
-						goalHit = true;
-						Debug.Log ("gooooal");
-
-							//break;
-							//Destroy (gameObject);
-							//done = true;
-						} else {
-							check = -1;
-						Debug.Log ("what is this " + map [x, z]); 
-							//deletePath (curPath);
-							//break;
 						}
+
+					} else if (map [x, z] == 100) {
+						
+						check = -3;
+						one = true;
+						two = true;
+						goalHit = true;
+						//Debug.Log ("gooooal");
+
 					} else {
-						//Debug.Log ("hit edge");
-						//Debug.Log (z);
-						//Debug.Log (x);
-						//check = -1;
-						//deletePath (curPath);
+						
 						check = -1;
+						//Debug.Log ("what is this " + map [x, z]); 
+					}
+				} else {
+					check = -1;
+				}
+					
+			}
+
+			if (check == -2) {
+				
+				bool found = false;
+
+				for (int i = 0; i < placesIveSeen.Count; i+=2) {
+					if (placesIveSeen [i] == x) {
+						if (placesIveSeen [i + 1] == z) {
+							found = true;
+							i = placesIveSeen.Count;
+							one = false;
+							two = false;
+						}
+					}
+				}
+
+
+				if (!found) {
+					placesIveSeen.Add (x);
+					placesIveSeen.Add (z);
+					if (dir == 0 || dir == 2) {
+						one = cast (1, x, z);
+						two = cast (3, x, z);
+					} else if (dir == 1 || dir == 3) {
+						one = cast (0, x, z);
+						two = cast (2, x, z);
 					}
 
-					c++;
 				}
-
-				//Debug.Log (check);
-				//if (check < -1) {
-					//drawCast (dir, xP, zP, curPath);
-			if (check == -2) {
-					//Debug.Log ("poop");
-					//allDirections (dir, x, z, curPath);
-				if (dir == 0 || dir == 2) {
-					one = cast (1, x, z, curPath);
-					two = cast (3, x, z, curPath);
-				} else if (dir == 1 || dir == 3) {
-					one = cast (0, x, z, curPath);
-					two = cast (2, x, z, curPath);
-				}
-			} else if (check > -2){
+			} else if (check > -2) {
 				one = false;
 				two = false;
 
 			}
+				
 
-				//}
-
+			if (one == false && two == false) {
+				return false;
+			} else {
+				pathToDraw.Add (dir);
+				posToDraw.Add (xP);
+				posToDraw.Add (zP);
+				return true;
 
 			}
-
-		if (one == false && two == false) {
-			return false;
 		} else {
-			//Debug.Log ("added " + dir);
-			pathToDraw.Add (dir);
-			posToDraw.Add (xP);
-			posToDraw.Add (zP);
-			return true;
-
+			return false;
 		}
+
+
+
 
 	}
 
-	void drawCast(int dir, int xP, int zP, List<Object> curPath){
-			//Debug.Log("drawing");
-			//Debug.Log (xP);
-		////Debug.Log (zP);
-		//Debug.Log ("drawing " + dir);
+	void drawCast(int dir, int xP, int zP){
 			int check = 1;
 			int x = xP;
 			int z = zP;
@@ -159,15 +204,12 @@ public class PathFinder : MonoBehaviour {
 		}
 
 		int count = 0;
-		while (check > 0 && count < 1000) {
-			//Debug.Log (z);
+		while (check > 0 && count < 100) {
 				if (x < width && x > 0 && z < height && z > 0) {
-				//Debug.Log (map [x, z]);
 					if (map [x, z] == 0) {
 						spawnPos = new Vector3 (x, 0, z);
 						Instantiate (point, spawnPos, gameObject.transform.rotation);
 						if (dir == 0) {
-						//Debug.Log ("poo");
 							z++;
 						} else if (dir == 1) {
 							x--;
@@ -178,8 +220,6 @@ public class PathFinder : MonoBehaviour {
 						}
 					} else if (map [x, z] == 200) {
 						check = -2;
-						//Debug.Log (x);
-						//Debug.Log (z);
 						if (dir == 0) {
 							z--;
 						} else if (dir == 1) {
@@ -201,78 +241,94 @@ public class PathFinder : MonoBehaviour {
 						x--;
 					}
 						check = -1;
-						//break;
 					} else {
-						//deletePath (curPath);
 						check = -1;
-						//break;
 					}
 				} else {
-					//deletePath (curPath);
 					check = -1;
 				}
-
-			count++;
 			}
-		//Debug.Log (check);
-		if (drawing > 0) {
-			//Debug.Log ("count is " + (pathToDraw.Count - 1));
-			//int next = pathToDraw [pathToDraw.Count - 1];
-			//pathToDraw.Remove (pathToDraw [pathToDraw.Count - 1]);
+		drawingDir--;
+		drawingPos -= 2;
+			if (drawingPos > 0) {
 
-			//int next = pathToDraw [0];
-			//pathToDraw.Remove (pathToDraw [0]);
-			//Debug.Log("drawing " + next);
-			drawing--;
-			drawingPos -= 2;
-			drawCast (pathToDraw[drawing], posToDraw[drawingPos -1], posToDraw[drawingPos], curPath);
-		}
+				drawCast (pathToDraw [drawingDir], posToDraw [drawingPos - 1], posToDraw [drawingPos]);
+			}
 	}
 
 
-	public void GetMap(int[,] colMap, int mWidth, int mHeight){
-		map = colMap;
+	/*
+	 * 
+	 * Function called by GridMap.cs
+	 * Passes all of the data needed for the pathFinder
+	 * 
+	 * colMap - copy of GridMap's 2D array used for collision detection
+	 * mWidth - width of collsionMap
+	 * mHeight - height of collsionMap
+	 * spawnId - used to tell pathfinder which color path tp use for which type of spawn point
+	 * 
+	 */
 
+	public void GetMap(int[,] colMap, int mWidth, int mHeight, int spawnId){
+
+		string id;
+		// ID of spawn point
+		if (spawnId == 0) {
+			point = pointA;
+			id = "A";
+		} else if (spawnId == 1) {
+			point = pointB;
+			id = "B";
+		} else if (spawnId == 2) {
+			point = pointX;
+			id = "X";
+		} else {
+			point = pointY;
+			id = "Y";
+		}
+
+		// collision map's variables
+		map = colMap;
 		width = mWidth;
 		height = mHeight;
 		xPos = (int)transform.position.x;
 		zPos = (int)transform.position.z;
+
+		// Initializing Lists
 		pathToDraw = new List<int> ();
 		posToDraw = new List<int> ();
+		placesIveSeen = new List<int> ();
 
-		//Debug.Log (xPos);
-		//Debug.Log (zPos);
+		/* Casting a check in every direction
+		 * 
+		 * 0 - North
+		 * 1 - West
+		 * 2 - South
+		 * 3 - East
+		 * 
+		 * */
 
+		cast (0, xPos, zPos);
+		castCount = 0;
 
-		List<Object> pathNorth = new List<Object> ();
-		cast (0, xPos, zPos, pathNorth);
-		List<Object> pathWest = new List<Object> ();
-		cast (1, xPos, zPos, pathWest);
-		List<Object> pathSouth = new List<Object> ();
-		cast (2, xPos, zPos, pathSouth);
-		List<Object> pathEast = new List<Object> ();
-		cast (3, xPos, zPos, pathEast);
+		castCount = 0;
+		cast (1, xPos, zPos);
 
-		//pathToDraw [pathToDraw.Count] = 0;
+		castCount = 0;
+		cast (2, xPos, zPos);
 
+		castCount = 0;
+		cast (3, xPos, zPos);
+
+		// Checking for valid path and then drawing the path
 		if (pathToDraw.Count > 0 && goalHit) {
-			//Debug.Log ("path is long " + pathToDraw.Count);
-			//errorGuy.AddForce (new Vector3 (0, 0, 0));
-			//int next = pathToDraw [pathToDraw.Count - 1];
-			//pathToDraw.Remove (pathToDraw [pathToDraw.Count - 1]);
-			drawing = pathToDraw.Count - 1;
+			drawingDir = pathToDraw.Count - 1;
 			drawingPos = posToDraw.Count - 1;
-			drawCast (pathToDraw [drawing], posToDraw[drawingPos -1], posToDraw[drawingPos], pathEast);
+			drawCast (pathToDraw [drawingDir], posToDraw[drawingPos -1], posToDraw[drawingPos]);
 		} else {
-			Debug.Log ("ERROR NO PATH");
+			Debug.LogError ("ERROR NO PATH ON " + id );
 		}
 			
-	}
-
-	void deletePath(List<Object> path){
-		for (int i = 0; i < path.Count; i++) {
-			Destroy (path[i]);
-		}
 	}
 		
 }

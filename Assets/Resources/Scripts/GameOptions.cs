@@ -14,6 +14,10 @@ public class GameOptions : MonoBehaviour {
     public static bool[] levelsPlayed;
     public static int maxLevels;
     public static int levelsCompleted;
+	public static int randomNumber;
+
+	public bool minesEnabled;
+	public bool gatesEnabled;
 
 	Image p1Icon;
 	Image p2Icon;
@@ -36,6 +40,11 @@ public class GameOptions : MonoBehaviour {
         }
     }
 
+	void Start(){
+		minesEnabled = true;
+		gatesEnabled = true;
+	}
+
     public void LoadOptions(bool p1, bool p2, bool p3, bool p4, int numRounds, int max)
     {
         player1 = p1;
@@ -57,19 +66,18 @@ public class GameOptions : MonoBehaviour {
     public void LoadLevel()
     {
         bool found = false;
-        int randomNumber = 0;
+        randomNumber = 0;
         if (levelsCompleted != numOfRounds)
         {
             while (!found)
             {
-                randomNumber = Random.Range(3, maxLevels + 1);
-                if (!levelsPlayed[randomNumber - 1])
+                randomNumber = Random.Range(0, maxLevels);
+                if (!levelsPlayed[randomNumber])
                 {
                     //string levelName = "Level_" + randomNumber;
                     //print(levelName);
-                    levelsPlayed[randomNumber - 1] = true;
-					SceneManager.LoadScene(randomNumber);
-					//SceneManager.LoadScene("practiceLevel");
+                    levelsPlayed[randomNumber] = true;
+					SceneManager.LoadScene("Arena");
 
                     found = true;
                 }

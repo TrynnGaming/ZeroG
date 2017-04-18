@@ -62,12 +62,11 @@ public class ResetGame : MonoBehaviour {
         {
             GameOptions.levelsPlayed[i] = false;
         }
-//Seting up the scores=====================================
-		p1score = ScoreSystem.Instance.player [1].GetScore ();
-		p2score = ScoreSystem.Instance.player [2].GetScore ();
-		p3score = ScoreSystem.Instance.player [3].GetScore ();
-		p4score = ScoreSystem.Instance.player [4].GetScore ();
-
+//Seting up the scores=====================================       
+		p1score = ScoreSystem.Instance.player[1].GetScore();
+		p2score = ScoreSystem.Instance.player[2].GetScore();
+		p3score = ScoreSystem.Instance.player[3].GetScore();
+		p4score = ScoreSystem.Instance.player[4].GetScore();
 
         scores.Add(p1score);
         scores.Add(p2score);
@@ -195,10 +194,11 @@ public class ResetGame : MonoBehaviour {
 //end=======================================================================
 
         //more reset code
-		ScoreSystem.Instance.player [1].SetScore (0);
-		ScoreSystem.Instance.player [2].SetScore (0);
-		ScoreSystem.Instance.player [3].SetScore (0);
-		ScoreSystem.Instance.player [4].SetScore (0);
+		ScoreSystem.Instance.player[1].SetScore(0);
+		ScoreSystem.Instance.player[2].SetScore(0);
+		ScoreSystem.Instance.player[3].SetScore(0);
+		ScoreSystem.Instance.player[4].SetScore(0);
+
 
     }
 

@@ -1,6 +1,4 @@
-﻿//This script is used to keep track of player stats such as score, deaths, and times. 
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -41,8 +39,14 @@ public class ScoreSystem : MonoBehaviour {
 		public void SetDeaths (int amount){deaths = amount;}
 		public int GetDeaths (){return deaths;}
 		//Time Get/Set functions
-		public void SetTime (int level, float time){levels [level].time = time;}
-		public float GetTime (int level){return levels [level].time;}
+		public void SetTime (int level, float time)
+		{
+			levels [level].time = time;
+		}
+		public float GetTime (int level)
+		{
+			return levels [level].time;
+		}
 		public float GetTotalTime()
 		{
 			float total_time = 0;
@@ -128,7 +132,6 @@ public class ScoreSystem : MonoBehaviour {
 		if(king != 0)
 			player [king].SetTrophy ("King");
 	}
-		
 	void Awake ()   
 	{
 		if (Instance == null)
@@ -146,6 +149,7 @@ public class ScoreSystem : MonoBehaviour {
 	void Update(){
 		myScene = SceneManager.GetActiveScene();
 		if (myScene.name == "GameStart") {
+			
 			//Make players
 			if (current_level != 0) 
 			{
@@ -154,7 +158,12 @@ public class ScoreSystem : MonoBehaviour {
 				ScoreSystem.Instance.player.Add (2, new Player ());
 				ScoreSystem.Instance.player.Add (3, new Player ());
 				ScoreSystem.Instance.player.Add (4, new Player ());
-			}
+
+				ScoreSystem.Instance.player[1].SetScore(0);
+				ScoreSystem.Instance.player[2].SetScore(0);
+				ScoreSystem.Instance.player[3].SetScore(0);
+				ScoreSystem.Instance.player[4].SetScore(0);
+			}			
 		}
 	}
 }

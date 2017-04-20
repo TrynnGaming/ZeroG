@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.01.08.00">
+    <object class="AudioFile" id="{672437a5-a96b-4ff8-b6f8-351e3f775fa8}">
+        <property name="assetPath">
+            <value>SFX/Explosion/ZeroG_Explosion_1.wav</value>
+        </property>
+        <property name="frequencyInKHz">
+            <value>44.0999985</value>
+        </property>
+        <property name="channelCount">
+            <value>2</value>
+        </property>
+        <property name="length">
+            <value>1.4858503401360543</value>
+        </property>
+        <relationship name="masterAssetFolder">
+            <destination>{10788a8a-7ef9-4239-a0f8-2228d7019d9a}</destination>
+        </relationship>
+    </object>
+</objects>

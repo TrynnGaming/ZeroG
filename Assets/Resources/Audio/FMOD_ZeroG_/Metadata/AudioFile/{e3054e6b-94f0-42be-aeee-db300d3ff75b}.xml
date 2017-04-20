@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.01.08.00">
+    <object class="AudioFile" id="{e3054e6b-94f0-42be-aeee-db300d3ff75b}">
+        <property name="assetPath">
+            <value>SFX/Rocks/rocks stream down heavy 02.wav</value>
+        </property>
+        <property name="isStreaming">
+            <value>true</value>
+        </property>
+        <property name="frequencyInKHz">
+            <value>96</value>
+        </property>
+        <property name="channelCount">
+            <value>2</value>
+        </property>
+        <property name="length">
+            <value>10.4</value>
+        </property>
+        <relationship name="masterAssetFolder">
+            <destination>{10788a8a-7ef9-4239-a0f8-2228d7019d9a}</destination>
+        </relationship>
+    </object>
+</objects>

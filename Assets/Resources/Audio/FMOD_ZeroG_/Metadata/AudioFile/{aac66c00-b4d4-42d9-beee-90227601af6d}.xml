@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.01.09.00">
+    <object class="AudioFile" id="{aac66c00-b4d4-42d9-beee-90227601af6d}">
+        <property name="assetPath">
+            <value>ZeroG Song 1 (2).wav</value>
+        </property>
+        <property name="isStreaming">
+            <value>true</value>
+        </property>
+        <property name="frequencyInKHz">
+            <value>48</value>
+        </property>
+        <property name="channelCount">
+            <value>2</value>
+        </property>
+        <property name="length">
+            <value>168.00002083333334</value>
+        </property>
+        <relationship name="masterAssetFolder">
+            <destination>{10788a8a-7ef9-4239-a0f8-2228d7019d9a}</destination>
+        </relationship>
+    </object>
+</objects>
